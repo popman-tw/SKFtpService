@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{12345678-1234-1234-1234-123456789012}</ProjectGuid>
+    <ProjectVersion>16.0</ProjectVersion>
+    <FrameworkType>VCL</FrameworkType>
+    <MainSource>SKFtpService.cpp</MainSource>
+    <Base>True</Base>
+    <Config Condition="'$(Config)'==''">Debug</Config>
+    <Platform Condition="'$(Platform)'==''">Win32</Platform>
+    <TargetedPlatforms>1</TargetedPlatforms>
+    <AppType>Application</AppType>
+    <Compiling>True</Compiling>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''"/>
+  <PropertyGroup Condition="'$(Config)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimization>false</Optimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Config)'=='Release'">
+    <Optimization>true</Optimization>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <CppCompile Include="Source/FTPServer.cpp">
+      <BuildOrder>0</BuildOrder>
+    </CppCompile>
+    <CppCompile Include="Source/FTPServiceManager.cpp">
+      <BuildOrder>1</BuildOrder>
+    </CppCompile>
+    <CppCompile Include="Source/SystemTray.cpp">
+      <BuildOrder>2</BuildOrder>
+    </CppCompile>
+    <CppCompile Include="Source/ClientHandler.cpp">
+      <BuildOrder>3</BuildOrder>
+    </CppCompile>
+    <CppCompile Include="Forms/MainForm.cpp">
+      <BuildOrder>4</BuildOrder>
+    </CppCompile>
+    <HeaderFile Include="Source/FTPServer.h">
+      <BuildOrder>10</BuildOrder>
+    </HeaderFile>
+    <HeaderFile Include="Source/FTPServiceManager.h">
+      <BuildOrder>11</BuildOrder>
+    </HeaderFile>
+    <HeaderFile Include="Source/SystemTray.h">
+      <BuildOrder>12</BuildOrder>
+    </HeaderFile>
+    <HeaderFile Include="Source/ClientHandler.h">
+      <BuildOrder>13</BuildOrder>
+    </HeaderFile>
+    <HeaderFile Include="Forms/MainForm.h">
+      <BuildOrder>14</BuildOrder>
+    </HeaderFile>
+    <FormResources Include="Forms/MainForm.dfm">
+      <BuildOrder>20</BuildOrder>
+    </FormResources>
+  </ItemGroup>
+  <Import Project="$(BDS)\Bin\CodeGear.Cpp.Targets"/>
+</Project>

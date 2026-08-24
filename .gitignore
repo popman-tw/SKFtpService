@@ -1,0 +1,51 @@
+# C++ Builder
+*.exe
+*.obj
+*.o
+*.a
+*.lib
+*.res
+*.dcu
+*.dsk
+*.hpp.bak
+*.cpp.bak
+
+# IDE
+.idea/
+*.suo
+*.user
+*.ncb
+*.aps
+*.bak
+*.ncb
+*.depend
+
+# Build directories
+bin/
+obj/
+Debug/
+Release/
+
+# CMake
+cmake_build/
+CMakeCache.txt
+CMakeLists.txt.user
+
+# System files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Configuration files
+config.ini
+*.log
+
+# Output
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
