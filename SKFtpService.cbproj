@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{12345678-1234-1234-1234-123456789012}</ProjectGuid>
+    <ProjectGuid>{A1B2C3D4-E5F6-47G8-H9I0-J1K2L3M4N5O6}</ProjectGuid>
     <ProjectVersion>16.0</ProjectVersion>
     <FrameworkType>VCL</FrameworkType>
     <MainSource>SKFtpService.cpp</MainSource>
@@ -12,16 +12,33 @@
     <AppType>Application</AppType>
     <Compiling>True</Compiling>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''"/>
+  
+  <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+    <DCC_UsePackage>rtl;vcl;vclimg;vcldb;bindcomp;DBXFirebird;DBXInterBaseDriver;IndyCore;IndyProtocols;IndySystem;inet</DCC_UsePackage>
+  </PropertyGroup>
+  
   <PropertyGroup Condition="'$(Config)'=='Debug'">
     <DebugSymbols>true</DebugSymbols>
     <Optimization>false</Optimization>
+    <UnitSearchPath>$(BDS)\source\vcl;$(BDSCOMMONDIR)\Source\Vcl</UnitSearchPath>
+    <IncludePath>$(BDS)\include</IncludePath>
+    <ResourcePath>$(BDS)\lib</ResourcePath>
+    <LibraryPath>$(BDS)\lib;$(BDS)\lib\Win32</LibraryPath>
   </PropertyGroup>
+  
   <PropertyGroup Condition="'$(Config)'=='Release'">
     <Optimization>true</Optimization>
     <DebugSymbols>false</DebugSymbols>
+    <UnitSearchPath>$(BDS)\source\vcl;$(BDSCOMMONDIR)\Source\Vcl</UnitSearchPath>
+    <IncludePath>$(BDS)\include</IncludePath>
+    <ResourcePath>$(BDS)\lib</ResourcePath>
+    <LibraryPath>$(BDS)\lib;$(BDS)\lib\Win32</LibraryPath>
   </PropertyGroup>
+  
   <ItemGroup>
+    <CppCompile Include="SKFtpService.cpp">
+      <BuildOrder>-1</BuildOrder>
+    </CppCompile>
     <CppCompile Include="Source/FTPServer.cpp">
       <BuildOrder>0</BuildOrder>
     </CppCompile>
@@ -55,6 +72,15 @@
     <FormResources Include="Forms/MainForm.dfm">
       <BuildOrder>20</BuildOrder>
     </FormResources>
+    <ResourceFile Include="SKFtpService.res">
+      <BuildOrder>30</BuildOrder>
+    </ResourceFile>
   </ItemGroup>
+  
+  <!-- 排除 xmlrtl 庫的引用，避免不必要的依賴 -->
+  <PropertyGroup>
+    <DCC_UsePackage Condition="$(DCC_UsePackage) != ''">$(DCC_UsePackage.Replace('xmlrtl;', ''))</DCC_UsePackage>
+  </PropertyGroup>
+  
   <Import Project="$(BDS)\Bin\CodeGear.Cpp.Targets"/>
 </Project>
