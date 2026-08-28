@@ -7,8 +7,16 @@
 #include <Vcl.Forms.hpp>
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Menus.hpp>
-#include <Vcl.Messages.hpp>
+#include <windows.h>
 #include "../Source/FTPServer.h"
+
+// 自訂訊息結構 - 用於托盤通知
+struct TWMUser {
+    unsigned int Msg;
+    WPARAM WParam;
+    LPARAM LParam;
+    LRESULT Result;
+};
 
 class TMainForm : public TForm {
 __published:
@@ -50,13 +58,13 @@ private:
     void CleanupFTPServer();
     void ShowTrayNotification(const AnsiString& title, const AnsiString& message);
     
+protected:
+    // 訊息處理
+    virtual LRESULT __fastcall WndProc(TMessage &Message);
+    
 public:
     __fastcall TMainForm(TComponent* Owner);
     virtual __fastcall ~TMainForm();
-    
-BEGIN_MESSAGE_MAP
-    MESSAGE_HANDLER(WM_USER + 1, TWMUser, WMTrayNotification)
-END_MESSAGE_MAP(TForm)
 };
 
 extern PACKAGE TMainForm *MainForm;
