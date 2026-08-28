@@ -124,6 +124,20 @@ void __fastcall TMainForm::WMTrayNotification(TWMUser &Message) {
     Message.Result = 0;
 }
 
+LRESULT __fastcall TMainForm::WndProc(TMessage &Message) {
+    // 自訂訊息處理
+    if (Message.Msg == WM_USER + 1) {
+        TWMUser tMsg;
+        tMsg.Msg = Message.Msg;
+        tMsg.WParam = Message.WParam;
+        tMsg.LParam = Message.LParam;
+        WMTrayNotification(tMsg);
+        return 0;
+    }
+    
+    return TForm::WndProc(Message);
+}
+
 void TMainForm::UpdateStatusLabel() {
     if (ftpServer && ftpServer->IsServiceRunning()) {
         LabelStatus->Caption = "狀態: 執行中 ✓";
