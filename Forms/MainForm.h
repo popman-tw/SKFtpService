@@ -7,6 +7,7 @@
 #include <Vcl.Forms.hpp>
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Menus.hpp>
+#include <Vcl.Messages.hpp>
 #include "../Source/FTPServer.h"
 
 class TMainForm : public TForm {
