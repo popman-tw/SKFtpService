@@ -1,5 +1,6 @@
 #include "SystemTray.h"
 #include <stdio.h>
+#include <wchar.h>
 
 SystemTray::SystemTray() : hWnd(NULL), isVisible(true), serviceRunning(false) {
     ZeroMemory(&nid, sizeof(NOTIFYICONDATA));
@@ -22,13 +23,19 @@ bool SystemTray::AddIcon(HWND hWindow, UINT uID, HICON hIcon, const AnsiString& 
     nid.hWnd = hWnd;
     nid.uID = uID;
     nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-    nid.uCallbackMessage = WM_APP + 1;  // 自定義消息
+    nid.uCallbackMessage = WM_APP + 1;  // 自訂消息
     nid.hIcon = hIcon;
     
     if (!tooltip.IsEmpty()) {
-        strncpy(nid.szTip, tooltip.c_str(), sizeof(nid.szTip) - 1);
+        // 將 AnsiString 轉換為寬字符
+        int len = MultiByteToWideChar(CP_ACP, 0, tooltip.c_str(), -1, NULL, 0);
+        if (len > 0 && len <= sizeof(nid.szTip) / sizeof(nid.szTip[0])) {
+            MultiByteToWideChar(CP_ACP, 0, tooltip.c_str(), -1, nid.szTip, len);
+        } else {
+            wcscpy_s(nid.szTip, sizeof(nid.szTip) / sizeof(nid.szTip[0]), L"SKFtpService");
+        }
     } else {
-        strcpy(nid.szTip, "SKFtpService");
+        wcscpy_s(nid.szTip, sizeof(nid.szTip) / sizeof(nid.szTip[0]), L"SKFtpService");
     }
     
     return Shell_NotifyIcon(NIM_ADD, &nid) ? true : false;
@@ -58,7 +65,13 @@ bool SystemTray::UpdateIcon(HICON hIcon, const AnsiString& tooltip) {
     nid.hIcon = hIcon;
     
     if (!tooltip.IsEmpty()) {
-        strncpy(nid.szTip, tooltip.c_str(), sizeof(nid.szTip) - 1);
+        // 將 AnsiString 轉換為寬字符
+        int len = MultiByteToWideChar(CP_ACP, 0, tooltip.c_str(), -1, NULL, 0);
+        if (len > 0 && len <= sizeof(nid.szTip) / sizeof(nid.szTip[0])) {
+            MultiByteToWideChar(CP_ACP, 0, tooltip.c_str(), -1, nid.szTip, len);
+        } else {
+            wcscpy_s(nid.szTip, sizeof(nid.szTip) / sizeof(nid.szTip[0]), L"SKFtpService");
+        }
     }
     
     return Shell_NotifyIcon(NIM_MODIFY, &nid) ? true : false;
