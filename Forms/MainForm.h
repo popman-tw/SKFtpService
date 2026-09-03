@@ -8,7 +8,10 @@
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Menus.hpp>
 #include <windows.h>
+#include <string>
 #include "../Source/FTPServer.h"
+
+using namespace std;
 
 // 自訂訊息結構 - 用於托盤通知
 struct TWMUser {
@@ -53,10 +56,10 @@ private:
     bool isMinimizedToTray;
     
     void UpdateStatusLabel();
-    void AddLogMessage(const AnsiString& message);
+    void AddLogMessage(const wstring& message);
     void InitializeFTPServer();
     void CleanupFTPServer();
-    void ShowTrayNotification(const AnsiString& title, const AnsiString& message);
+    void ShowTrayNotification(const wstring& title, const wstring& message);
     
 protected:
     // 訊息處理
