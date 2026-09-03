@@ -4,6 +4,7 @@
 #include <vcl.h>
 #include <Winsock2.h>
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -11,14 +12,14 @@ class FTPServiceManager; // 前向聲明
 
 struct ClientSession {
     SOCKET socket;              // 客戶端 socket
-    AnsiString clientIP;        // 客戶端 IP
+    wstring clientIP;           // 客戶端 IP
     int clientPort;             // 客戶端埠號
-    AnsiString username;        // 已登入的用戶名
+    wstring username;           // 已登入的用戶名
     bool isAuthenticated;       // 是否已驗證
-    AnsiString currentDirectory; // 當前目錄
+    wstring currentDirectory;   // 當前目錄
     SOCKET dataSocket;          // 數據連接 socket
     bool binaryMode;            // 傳輸模式 (false=ASCII, true=BINARY)
-    __int64 restPosition;           // REST 命令設定的位置，用於斷點續傳
+    __int64 restPosition;       // REST 命令設定的位置，用於斷點續傳
 };
 
 struct PASVInfo {
@@ -28,14 +29,14 @@ struct PASVInfo {
 };
 
 struct PORTInfo {
-    AnsiString hostIP;          // 客戶端 IP
+    wstring hostIP;             // 客戶端 IP
     unsigned short port;        // 客戶端數據埠
     bool active;                // 是否已建立主動連接
 };
 
 // 文件傳輸信息
 struct FileTransferInfo {
-    AnsiString filePath;
+    wstring filePath;
     HANDLE fileHandle;
     __int64 fileSize;
     __int64 transferredSize;
@@ -48,68 +49,72 @@ private:
     PASVInfo pasvInfo;
     PORTInfo portInfo;
     FileTransferInfo transferInfo;
-    AnsiString sharedFolder;
+    wstring sharedFolder;
     bool allowUpload;
     bool allowDownload;
     FTPServiceManager* serviceManager;
-    AnsiString renameFromPath;  // 用於 RNFR 命令
+    wstring renameFromPath;     // 用於 RNFR 命令
     
     static const int MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
     static const int DATA_BUFFER_SIZE = 4096;
     
     // FTP 命令處理
-    void HandleUSER(const AnsiString& param);
-    void HandlePASS(const AnsiString& param);
-    void HandleQUIT(const AnsiString& param);
-    void HandleLIST(const AnsiString& param);
-    void HandleNLST(const AnsiString& param);
-    void HandleCWD(const AnsiString& param);
-    void HandleRETR(const AnsiString& param);
-    void HandleSTOR(const AnsiString& param);
-    void HandleAPPE(const AnsiString& param);
-    void HandleDELE(const AnsiString& param);
-    void HandlePWD(const AnsiString& param);
-    void HandleMKD(const AnsiString& param);
-    void HandleRMD(const AnsiString& param);
-    void HandleTYPE(const AnsiString& param);
-    void HandlePASV(const AnsiString& param);
-    void HandlePORT(const AnsiString& param);
-    void HandleREST(const AnsiString& param);
-    void HandleSIZE(const AnsiString& param);
-    void HandleMDTM(const AnsiString& param);
-    void HandleABOR(const AnsiString& param);
-    void HandleRNFR(const AnsiString& param);
-    void HandleRNTO(const AnsiString& param);
-    void HandleSYST(const AnsiString& param);
-    void HandleNOOP(const AnsiString& param);
+    void HandleUSER(const wstring& param);
+    void HandlePASS(const wstring& param);
+    void HandleQUIT(const wstring& param);
+    void HandleLIST(const wstring& param);
+    void HandleNLST(const wstring& param);
+    void HandleCWD(const wstring& param);
+    void HandleRETR(const wstring& param);
+    void HandleSTOR(const wstring& param);
+    void HandleAPPE(const wstring& param);
+    void HandleDELE(const wstring& param);
+    void HandlePWD(const wstring& param);
+    void HandleMKD(const wstring& param);
+    void HandleRMD(const wstring& param);
+    void HandleTYPE(const wstring& param);
+    void HandlePASV(const wstring& param);
+    void HandlePORT(const wstring& param);
+    void HandleREST(const wstring& param);
+    void HandleSIZE(const wstring& param);
+    void HandleMDTM(const wstring& param);
+    void HandleABOR(const wstring& param);
+    void HandleRNFR(const wstring& param);
+    void HandleRNTO(const wstring& param);
+    void HandleSYST(const wstring& param);
+    void HandleNOOP(const wstring& param);
     
     // 輔助函數
-    void SendResponse(int code, const AnsiString& message);
-    bool ValidatePath(const AnsiString& path);
-    AnsiString NormalizePath(const AnsiString& path);
-    bool AuthenticateUser(const AnsiString& username, const AnsiString& password);
+    void SendResponse(int code, const wstring& message);
+    bool ValidatePath(const wstring& path);
+    wstring NormalizePath(const wstring& path);
+    bool AuthenticateUser(const wstring& username, const wstring& password);
     bool OpenDataConnection();
     bool CloseDataConnection();
-    bool SendFileList(const AnsiString& path, bool nameOnly);
-    bool SendFile(const AnsiString& path);
-    bool ReceiveFile(const AnsiString& path, bool append);
-    AnsiString GetFileInfo(const AnsiString& path);
-    bool IsPathTraversal(const AnsiString& path);
-    AnsiString GetAbsolutePath(const AnsiString& relativePath);
+    bool SendFileList(const wstring& path, bool nameOnly);
+    bool SendFile(const wstring& path);
+    bool ReceiveFile(const wstring& path, bool append);
+    wstring GetFileInfo(const wstring& path);
+    bool IsPathTraversal(const wstring& path);
+    wstring GetAbsolutePath(const wstring& relativePath);
     SOCKET EstablishPASVConnection();
     SOCKET EstablishPORTConnection();
-    AnsiString ConvertFileSizeToString(__int64 size);
-    AnsiString ConvertTimeToFTPFormat(FILETIME ft);
+    wstring ConvertFileSizeToString(__int64 size);
+    wstring ConvertTimeToFTPFormat(FILETIME ft);
+    
+    // 字符轉換輔助函數
+    static wstring AnsiToWide(const string& ansiStr);
+    static string WideToAnsi(const wstring& wideStr);
     
 public:
-    ClientHandler(SOCKET clientSocket, const AnsiString& clientIP, int clientPort, FTPServiceManager* manager);
+    ClientHandler(SOCKET clientSocket, const wstring& clientIP, int clientPort, FTPServiceManager* manager);
     ~ClientHandler();
     
     // 處理客戶端連接
     void HandleClient();
     
     // 設定配置
-    void SetSharedFolder(const AnsiString& folder) { sharedFolder = folder; }
+    void SetSharedFolder(const wstring& folder) { sharedFolder = folder; }
     void SetAllowUpload(bool allow) { allowUpload = allow; }
     void SetAllowDownload(bool allow) { allowDownload = allow; }
     
