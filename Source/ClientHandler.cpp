@@ -1,11 +1,12 @@
 #include "ClientHandler.h"
+#include "FTPServiceManager.h"
 #include <stdio.h>
 #include <string.h>
 #include <shlwapi.h>
 #pragma comment(lib, "Shlwapi.lib")
 
-ClientHandler::ClientHandler(SOCKET clientSocket, const AnsiString& clientIP, int clientPort)
-    : allowUpload(true), allowDownload(true) {
+ClientHandler::ClientHandler(SOCKET clientSocket, const AnsiString& clientIP, int clientPort, FTPServiceManager* manager)
+    : allowUpload(true), allowDownload(true), serviceManager(manager) {
     session.socket = clientSocket;
     session.clientIP = clientIP;
     session.clientPort = clientPort;
@@ -76,9 +77,14 @@ void ClientHandler::HandleUSER(const AnsiString& param) {
 }
 
 void ClientHandler::HandlePASS(const AnsiString& param) {
-    // 簡單驗證 - 可根據需要修改為真實的驗證機制
-    session.isAuthenticated = true;
-    SendResponse(230, "User logged in, proceed");
+    // 使用 AD 認證或本地認證
+    if (AuthenticateUser(session.username, param)) {
+        session.isAuthenticated = true;
+        SendResponse(230, "User logged in, proceed");
+    } else {
+        session.isAuthenticated = false;
+        SendResponse(530, "Authentication failed");
+    }
 }
 
 void ClientHandler::HandleQUIT(const AnsiString& param) {
@@ -217,4 +223,28 @@ AnsiString ClientHandler::NormalizePath(const AnsiString& path) {
     // 規範化路徑
     // TODO: 實現路徑規範化邏輯
     return path;
+}
+
+bool ClientHandler::AuthenticateUser(const AnsiString& username, const AnsiString& password) {
+    if (!serviceManager) {
+        return false;
+    }
+    
+    // 檢查 AD 認證是否啟用
+    if (serviceManager->GetADConfig().enabled) {
+        // 使用 AD 驗證
+        if (!serviceManager->VerifyADCredentials(username, password)) {
+            return false;
+        }
+        
+        // 檢查用戶是否在允許列表中
+        if (!serviceManager->IsUserInAllowedList(username)) {
+            return false;
+        }
+        
+        return true;
+    } else {
+        // 簡單驗證 - 在實際應用中應實現真實的用戶驗證機制
+        return true;
+    }
 }

@@ -7,10 +7,12 @@
 
 using namespace std;
 
+class FTPServiceManager; // 前向聲明
+
 struct ClientSession {
-    SOCKET socket;              // 客户端 socket
-    AnsiString clientIP;        // 客户端 IP
-    int clientPort;             // 客户端埠号
+    SOCKET socket;              // 客戶端 socket
+    AnsiString clientIP;        // 客戶端 IP
+    int clientPort;             // 客戶端埠號
     AnsiString username;        // 已登入的用戶名
     bool isAuthenticated;       // 是否已驗證
     AnsiString currentDirectory; // 當前目錄
@@ -22,6 +24,7 @@ private:
     AnsiString sharedFolder;
     bool allowUpload;
     bool allowDownload;
+    FTPServiceManager* serviceManager;  // 指向服務管理器用於 AD 認證
     
     // FTP 命令處理
     void HandleUSER(const AnsiString& param);
@@ -43,9 +46,10 @@ private:
     void SendResponse(int code, const AnsiString& message);
     bool ValidatePath(const AnsiString& path);
     AnsiString NormalizePath(const AnsiString& path);
+    bool AuthenticateUser(const AnsiString& username, const AnsiString& password);
     
 public:
-    ClientHandler(SOCKET clientSocket, const AnsiString& clientIP, int clientPort);
+    ClientHandler(SOCKET clientSocket, const AnsiString& clientIP, int clientPort, FTPServiceManager* manager);
     ~ClientHandler();
     
     // 處理用戶端連接
